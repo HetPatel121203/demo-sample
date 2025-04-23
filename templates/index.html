@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Helper Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <h1>Code Helper Tool</h1>
+        
+        <!-- Display flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Form for code and prompt -->
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="input-section">
+                <h2>Paste Your Code</h2>
+                {{ form.user_code(placeholder="Enter JavaScript code here...", rows=10, cols=50) }}
+            </div>
+            
+            <div class="input-section">
+                <h2>Describe Changes</h2>
+                {{ form.change_prompt(placeholder="E.g., 'add error handling' or 'optimize loop'", rows=4, cols=50) }}
+            </div>
+            
+            {{ form.submit(class="action-btn") }}
+        </form>
+        
+        <!-- Suggestions -->
+        {% if modified_code %}
+            <div class="output-section">
+                <h2>Suggested Changes</h2>
+                <div class="suggestion-content">
+                    <h3>New Code:</h3>
+                    <pre>{{ modified_code }}</pre>
+                    <h3>Explanation:</h3>
+                    <p>{{ explanation }}</p>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="apply_changes" value="true">
+                        <button type="submit" class="action-btn apply-btn">Apply Changes</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Final Code -->
+        {% if final_code %}
+            <div class="output-section">
+                <h2>Final Code</h2>
+                <pre>{{ final_code }}</pre>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
